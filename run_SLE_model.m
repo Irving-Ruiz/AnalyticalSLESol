@@ -25,11 +25,13 @@ Theta = 0;
 K = 1.5;
 % Dimensionless inlet concentration of the liquid phase, Win
 Win = 0.3;
+% Dimensionless initial concentration of the liquid phase, w0
+w0 = 0.5;
 
 %% 2. Space & Time Discretization
 
 % Final dimensionless simulation time, τf (tauf)
-tauf = 10;
+tauf = 3;
 % Number of temporal grid points, Ntau
 Ntau = 1000;
 % Dimensionless time vector
@@ -48,14 +50,14 @@ xi = [linspace(0, 1, Nxi)]';
 % Compute volume-average solid concentration (up), liquid concentration ...
 % (w), and yield (eta)
 [up, w, eta] = SLE_average_solution(N, Bi, a, v, Theta, K, ...
-    Win, Ln, tau);
+    Win, w0, Ln, tau);
 
 % Preallocate matrix and compute local solid concentration u(xi, tau) ...
 % across all spatial nodes
 u = zeros(Ntau,Nxi);
 for j = 1:Nxi
     u(:,j) = SLE_local_solution(N, Bi, a, v, Theta, K, ...
-        Win, Ln, xi(j), tau);
+        Win, w0, Ln, xi(j), tau);
 end
 
 % Generate 2D coordinate grids for 3D surface plotting
@@ -88,7 +90,6 @@ grid on;
 title('Extraction Yield','Interpreter','latex');
 xlabel('Dimensionless Time, $\tau$', 'Interpreter', 'latex');
 ylabel('Extraction Yield, $\eta$', 'Interpreter', 'latex');
-
 
 % Figure 4: Spatiotemporal Concentration Profile in Solid Phase
 figure('Name', 'Solid Concentration Profile');

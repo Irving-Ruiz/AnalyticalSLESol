@@ -1,5 +1,5 @@
 function [up,w,eta] = SLE_average_solution(N, Bi, a, v, ...
-    Theta, K, Win, Ln, tau)
+    Theta, K, Win, w0, Ln, tau)
 % SLE_AVERAGE_SOLUTION: Computes the volume-averaged solution for SLE
 %
 % Input arguments:
@@ -10,8 +10,9 @@ function [up,w,eta] = SLE_average_solution(N, Bi, a, v, ...
 % Theta:    Ratio of diffusion time to liquid residence time
 % K:        Equilibrium partition constant
 % Win:      Dimensionless inlet concentration of the liquid phase
+% w0:       Dimensionless initial concentration of the liquid phase
 % Ln:       Eigenvalues of the characteristic equation
-% tau:      Fourier number (dimensionless time)
+% tau:      Fourier number (dimensionless time) 
 
 % Output arguments:
 % up:       Volume-averaged concentration of the solid phase
@@ -35,12 +36,12 @@ phi = 2*v+2;
 EpL = -2*Ln .* (Bi*Jv - Ln .* Jv1) + ...
     (Theta - Ln.^2) .* ((v * Bi ./ Ln - Ln) .* Jv + (v - Bi) .* Jv1) - ...
     (phi * Bi / a) * (Ln .* Jv - v * Jv1);
-An = 2*((Theta * Win) .* (Bi * Jv - Ln .* Jv1) - ...
+An = 2*((Theta * Win - w0 * Ln.^2) .* (Bi * Jv - Ln .* Jv1) - ...
     (phi * K * Bi / a) * Ln .* Jv1) ./ (Ln .* EpL);
 Bn = Bi * An .* Jv1 ./ (K * (Bi * Jv - Ln .* Jv1) .* Ln);
 
 if Theta == 0
-    A0 = K / (a + 1);
+    A0 = (a * w0 + K)/(a+1);
 else
     A0 = Win;
 end
